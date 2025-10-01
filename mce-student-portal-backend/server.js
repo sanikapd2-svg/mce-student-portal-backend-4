@@ -24,15 +24,21 @@ app.use(compression());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
 
-// CORS configuration
+// ✅ Dynamic CORS (Render + Vercel + localhost)
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  process.env.FRONTEND_URL // e.g. https://mce-portal.vercel.app
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 
@@ -69,13 +75,16 @@ app.use('*', (req, res) => {
   });
 });
 
-// Error handling middleware (must be last)
+// Error handling middleware
 app.use(errorHandler);
 
 // Database connection
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('Database connection error:', error.message);
@@ -88,7 +97,6 @@ const PORT = process.env.PORT || 5003;
 
 const startServer = async () => {
   await connectDB();
-  
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📚 MCE Student Portal API ready for students!`);
@@ -96,13 +104,12 @@ const startServer = async () => {
   });
 };
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
+// Handle unhandled errors
+process.on('unhandledRejection', (err) => {
   console.log('Unhandled Promise Rejection:', err.message);
   process.exit(1);
 });
 
-// Handle uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.log('Uncaught Exception:', err.message);
   process.exit(1);
