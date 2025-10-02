@@ -24,32 +24,21 @@ app.use(compression());
 
 // Rate limiting
 const limiter = rateLimit({
-<<<<<<< HEAD
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
-=======
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100,
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // 100 requests per window
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
 
-<<<<<<< HEAD
-// CORS configuration
-app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173'],
-=======
-// ✅ Dynamic CORS (Render + Vercel + localhost)
+// ✅ CORS configuration (local + vercel frontend + render backend)
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:5173',
-  process.env.FRONTEND_URL // e.g. https://mce-portal.vercel.app
+  process.env.FRONTEND_URL // example: https://mce-portal.vercel.app
 ].filter(Boolean);
 
 app.use(cors({
   origin: allowedOrigins,
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
   credentials: true
 }));
 
@@ -86,24 +75,16 @@ app.use('*', (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-// Error handling middleware (must be last)
-=======
 // Error handling middleware
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
 app.use(errorHandler);
 
 // Database connection
 const connectDB = async () => {
   try {
-<<<<<<< HEAD
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
-=======
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('Database connection error:', error.message);
@@ -116,10 +97,6 @@ const PORT = process.env.PORT || 5003;
 
 const startServer = async () => {
   await connectDB();
-<<<<<<< HEAD
-  
-=======
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📚 MCE Student Portal API ready for students!`);
@@ -127,26 +104,15 @@ const startServer = async () => {
   });
 };
 
-<<<<<<< HEAD
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-=======
 // Handle unhandled errors
 process.on('unhandledRejection', (err) => {
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
   console.log('Unhandled Promise Rejection:', err.message);
   process.exit(1);
 });
 
-<<<<<<< HEAD
-// Handle uncaught exceptions
-=======
->>>>>>> 4196db086f90d65e153c57dc43a3f59383bc6702
 process.on('uncaughtException', (err) => {
   console.log('Uncaught Exception:', err.message);
   process.exit(1);
 });
 
 startServer();
-
-module.exports = app;

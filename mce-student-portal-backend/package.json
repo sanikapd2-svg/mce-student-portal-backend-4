@@ -1,7 +1,7 @@
 {
-  "name": "edugamehub-backend",
+  "name": "mce-student-portal-backend",
   "version": "1.0.0",
-  "description": "Backend API for EduGameHub - A gamified educational platform",
+  "description": "Backend API for MCE Student Portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,8 +9,8 @@
     "test": "jest",
     "seed": "node scripts/seedDatabase.js"
   },
-  "keywords": ["education", "gamification", "mern", "api"],
-  "author": "MERN Workshop",
+  "keywords": ["education", "portal", "mern", "api"],
+  "author": "MCE Team",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
@@ -31,6 +31,6 @@
     "supertest": "^6.3.3"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": "18.x"
   }
 }
